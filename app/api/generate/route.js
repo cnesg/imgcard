@@ -38,8 +38,8 @@ ${COPY_RULES}
   prompt += `\n[매거진 이름] ${magName}\n[내용]\n"""${src}"""`;
 
   try {
-    // 💡 오류의 원인이었던 모델명을 gemini-1.5-flash로 수정했습니다!
-    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+    // 💡 요청하신 대로 모델명을 gemini-3.5-flash로 수정했습니다!
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${key}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
