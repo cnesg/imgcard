@@ -38,7 +38,8 @@ ${COPY_RULES}
   prompt += `\n[매거진 이름] ${magName}\n[내용]\n"""${src}"""`;
 
   try {
-    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
+    // 💡 오류의 원인이었던 모델명을 gemini-1.5-flash로 수정했습니다!
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -46,8 +47,18 @@ ${COPY_RULES}
         generationConfig: { responseMimeType: "application/json" }
       }),
     });
+    
     const data = await r.json();
-    if (!r.ok) return Response.json({ error: 'Gemini API 오류', detail: data }, { status: r.status });
+    
+    // 에러 발생 시 화면이 뻗지 않고 카드뉴스 형태로 오류를 안내하도록 수정
+    if (!r.ok) {
+        const errorMsg = JSON.stringify({
+            cover: { title: "API 연결 오류", subtitle: "설정을 확인해주세요" },
+            bodies: [{ label: "에러내용", text: data.error?.message || "알 수 없는 오류 발생" }],
+            closing: { label: "마무리", title: "다시 시도", text: "잠시 후 다시 생성해주세요." }
+        });
+        return Response.json({ text: errorMsg });
+    }
     
     const text = data.candidates[0].content.parts[0].text;
     return Response.json({ text });
